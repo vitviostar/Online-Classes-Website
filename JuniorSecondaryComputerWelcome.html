@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <!-- Robust redirect: JS handles file:// and http(s) contexts and triggers after 10s -->
+  <script>
+    (function(){
+      const DELAY_MS = 5000; // 5 seconds
+      const TARGET = 'JuniorSecondaryComputer.html';
+
+      function buildFileUrl() {
+        // location.pathname is like /C:/Users/USER/Desktop/OnlineClasses/Welcome.html
+        const p = location.pathname.replace(/\\/g, '/');
+        const dir = p.substring(0, p.lastIndexOf('/'));
+        return 'file://' + dir + '/' + TARGET;
+      }
+
+      function buildHttpUrl() {
+        // keep same origin and folder as current file
+        const href = location.href.split('?')[0].split('#')[0];
+        const idx = href.lastIndexOf('/');
+        const base = href.substring(0, idx + 1);
+        return base + TARGET;
+      }
+
+      function redirect() {
+        try {
+          if (location.protocol === 'file:') {
+            window.location.href = buildFileUrl();
+          } else {
+            window.location.href = buildHttpUrl();
+          }
+        } catch (e) {
+          // final fallback: try simple relative path
+          window.location.href = TARGET;
+        }
+      }
+
+      // schedule redirect
+      setTimeout(redirect, DELAY_MS);
+      // also expose a manual link for users
+      document.addEventListener('DOMContentLoaded', () => {
+        const l = document.getElementById('manualLink');
+        if (l) l.href = (location.protocol === 'file:') ? buildFileUrl() : buildHttpUrl();
+      });
+    })();
+  </script>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Welcome Animation</title>
+  <style>
+    :root{
+      --bg1:#0f2027;
+      --bg2:#2c5364;
+      --accent1:#ff8a00;
+      --accent2:#e52e71;
+      --text-shadow: 0 6px 20px rgba(0,0,0,.5);
+    }
+
+    html,body{
+      height:100%;
+      margin:0;
+      font-family: "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      background: radial-gradient(1200px 600px at 10% 20%, rgba(255,138,0,0.06), transparent),
+                  linear-gradient(120deg,var(--bg1),var(--bg2));
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      overflow:hidden;
+      color:#fff;
+    }
+
+    .stage{
+      text-align:center;
+      width:100%;
+      max-width:900px;
+      padding:40px;
+    }
+
+    .card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));
+      border-radius:16px;
+      padding:30px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.45);
+      backdrop-filter: blur(6px);
+    }
+
+    /* Welcome text */
+    .welcome {
+      font-size: clamp(36px, 9vw, 84px);
+      font-weight:900;
+      letter-spacing: .6rem;
+      display:inline-block;
+      line-height:1;
+      margin:6px 0 18px;
+      transform-origin:center;
+      text-shadow: var(--text-shadow);
+      /* gradient fill */
+      background: linear-gradient(90deg, var(--accent1), #ffd600 40%, var(--accent2));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+
+    /* individual letter styles for smooth reveal */
+    .welcome span{
+      display:inline-block;
+      transform: translateY(40px) rotateX(30deg) scale(.95);
+      opacity:0;
+      transition: transform 700ms cubic-bezier(.2,.9,.2,1), opacity 500ms;
+    }
+
+    .welcome span.revealed{
+      transform: translateY(0) rotateX(0) scale(1);
+      opacity:1;
+    }
+
+    /* subtle shine */
+    .welcome.shine{
+      position:relative;
+      overflow:visible;
+    }
+    .welcome.shine::after{
+      content:'';
+      position:absolute;
+      left:-40%;
+      top:-10%;
+      width:30%;
+      height:120%;
+      transform: skewX(-20deg);
+      background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,0.45), rgba(255,255,255,0));
+      animation: sweep 2.8s ease-in-out infinite;
+      opacity:.6;
+    }
+    @keyframes sweep {
+      0% { left:-40%; }
+      50% { left:140%; opacity:.8; }
+      100% { left:140%; opacity:0; }
+    }
+
+    /* subtitle */
+    .subtitle{
+      color: rgba(255,255,255,0.85);
+      margin-top:8px;
+      font-size: clamp(14px, 2.4vw, 20px);
+      opacity:.95;
+    }
+
+    /* emoji bubble animation area (absolute) */
+    .emoji-layer{
+      position:fixed;
+      inset:0;
+      pointer-events:none;
+      z-index:40;
+    }
+
+    /* emoji element */
+    .emoji {
+      position:absolute;
+      will-change: transform, opacity;
+      font-size: 28px;
+      text-shadow: 0 3px 8px rgba(0,0,0,0.45);
+      filter: drop-shadow(0 2px 6px rgba(0,0,0,0.35));
+      user-select:none;
+    }
+
+    /* confetti-like pop when letters reveal */
+    .pop {
+      display:inline-block;
+      transform-origin:center;
+      animation: pop .6s linear forwards;
+    }
+    @keyframes pop {
+      0% { transform: scale(.2) translateY(0); opacity:0; }
+      40% { transform: scale(1.2) translateY(-6px); opacity:1;}
+      100% { transform: scale(1) translateY(0); opacity:0;}
+    }
+
+    /* small footer hint */
+    .hint{
+      margin-top:18px;
+      font-size:13px;
+      color:rgba(255,255,255,0.6);
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="card">
+      <div id="welcomeText" class="welcome shine" aria-hidden="false"></div>
+      <div class="subtitle">We're glad you're here — enjoy the learning experience✨</div>
+      <div class="hint">Tip: click anywhere or press SPACE to send a burst of emojis</div>
+    </div>
+  </div>
+
+  <!-- emoji animation container -->
+  <div class="emoji-layer" id="emojiLayer" aria-hidden="true"></div>
+
+  <script>
+    // CONFIG
+    const TEXT = "WELCOME";
+    const EMOJIS = ['🎉','✨','🚀','🤩','🌟','🔥','👏','🎈','💫','😊','🥳'];
+    const LETTER_DELAY = 160;
+    const BURST_COUNT = 18;
+
+    // references
+    const welcomeEl = document.getElementById('welcomeText');
+    const layer = document.getElementById('emojiLayer');
+
+    // create letter spans
+    function buildText() {
+      welcomeEl.innerHTML = '';
+      for (const ch of TEXT) {
+        const span = document.createElement('span');
+        span.textContent = ch;
+        welcomeEl.appendChild(span);
+      }
+    }
+
+    // reveal letters one by one
+    async function reveal() {
+      const spans = [...welcomeEl.querySelectorAll('span')];
+      for (let i = 0; i < spans.length; i++) {
+        await wait(LETTER_DELAY);
+        spans[i].classList.add('revealed');
+        // small emoji pop for each letter
+        popAtSpan(spans[i]);
+      }
+      // small bounce / pulse after reveal
+      welcomeEl.animate([{ transform:'scale(1)' }, { transform:'scale(1.03)' }, { transform:'scale(1)' }], {
+        duration: 600,
+        easing:'cubic-bezier(.2,.9,.2,1)'
+      });
+    }
+
+    // helper wait
+    function wait(ms){ return new Promise(resolve => setTimeout(resolve, ms)); }
+
+    // pop emoji(s) around an element
+    function popAtSpan(span){
+      const rect = span.getBoundingClientRect();
+      const x = rect.left + rect.width/2;
+      const y = rect.top + rect.height/2;
+      // spawn small 3 emojis
+      for (let i=0;i<3;i++){
+        spawnEmoji(x + (Math.random()-0.5)*40, y + (Math.random()-0.5)*20, {tiny:true});
+      }
+    }
+
+    // spawn emoji with randomized motion
+    function spawnEmoji(x, y, opts = {}) {
+      const el = document.createElement('div');
+      el.className = 'emoji';
+      el.textContent = EMOJIS[Math.floor(Math.random()*EMOJIS.length)];
+      const size = opts.tiny ? 18 + Math.random()*8 : 20 + Math.random()*26;
+      el.style.fontSize = size + 'px';
+      el.style.left = (x - size/2) + 'px';
+      el.style.top = (y - size/2) + 'px';
+      layer.appendChild(el);
+
+      // random vector upwards with slight drift
+      const vx = (Math.random()-0.5) * 60;
+      const vy = -120 - Math.random()*260;
+      const rotation = (Math.random()-0.5)*720;
+      const duration = 1200 + Math.random()*1200;
+
+      const start = performance.now();
+      function animate(time){
+        const t = (time - start) / duration;
+        if (t >= 1) {
+          el.remove();
+          return;
+        }
+        // easing out
+        const ease = (--t)*t*t+1;
+        const curX = x + vx * ease;
+        const curY = y + vy * ease + (0.5 * 400 * (1-ease)); // small gravity effect
+        el.style.transform = `translate(${curX - x}px, ${curY - y}px) rotate(${rotation * ease}deg) scale(${1 - 0.25*ease})`;
+        el.style.opacity = String(1 - ease);
+        requestAnimationFrame(animate);
+      }
+      requestAnimationFrame(animate);
+    }
+
+    // burst from bottom center
+    function burst(fromX, fromY, count = BURST_COUNT) {
+      for (let i=0;i<count;i++){
+        const x = (fromX || window.innerWidth/2) + (Math.random()-0.5)*300;
+        const y = (fromY || window.innerHeight) + (Math.random()*10);
+        spawnEmoji(x, y, {tiny:false});
+      }
+    }
+
+    // create the welcome text and run reveal
+    buildText();
+    reveal();
+
+    // interactive: click or space to burst
+    window.addEventListener('click', (e) => {
+      burst(e.clientX, e.clientY, 22);
+    });
+    window.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+        e.preventDefault();
+        burst(undefined, undefined, 36);
+      }
+    });
+
+    // gentle periodic float of small emojis from bottom to top for background ambience
+    setInterval(()=> {
+      const sx = Math.random()*window.innerWidth;
+      spawnEmoji(sx, window.innerHeight + 20, {tiny:true});
+    }, 420);
+
+    // optional: when first reveal finishes, do a celebratory burst from center
+    setTimeout(()=>burst(window.innerWidth/2, window.innerHeight*0.85, 44), TEXT.length * LETTER_DELAY + 600);
+
+    // make sure layer resizes correctly (no-op here but placeholder)
+    window.addEventListener('resize', ()=>{ /* nothing special required */ });
+  </script>
+</body>
+</html>

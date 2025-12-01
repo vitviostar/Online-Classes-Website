@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>
+            JuniorSecondaryPhysics
+        </title>
+        <link style="text/css" rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <header> 
+            <hi> JUNIOR SECONDARY PHYSICS </hi>
+             <ul>
+                <li class="logo"><a href="Classes.html" aria-label="Home"> </a></li>
+                <li class="home"><a href="Classes.html"> <strong>HOME</strong> </a></li>
+                <li class="display"><a href=" Maths.html"> Maths </a> </li>
+                <li class="display"><a href="Computer Studies.html">Computer Studies</a></li>
+            </ul> 
+        </header>
+       <p>
+        <mark> Hello dear student, Welcome to my website where you can choose online classes you wish to attend. </mark>
+        <strong> BELLOW IS A SAMPLE OF ONLINE LEARNING SESSION </strong>
+        </p>
+<!-- Video block -->
+<div class="video-wrap">
+  <video id="myVideo" controls playsinline preload="metadata" poster="media/poster.jpg">
+    <source src="Physics Mcq 2025 __ Physics mcq __ physics mcq for all competitive exam.mp4" type="video/mp4">
+    Your browser does not support HTML5 video.
+  </video>
+
+  <!-- Optional visible play overlay for devices that block autoplay -->
+  <button id="playOverlay" class="video-play-overlay" aria-hidden="true">▶</button>
+</div>
+<div class="feedback-section">
+  <h3>Was this video helpful?</h3>
+  <div class="emoji-reactions">
+    <button class="emoji-btn">😊</button>
+    <button class="emoji-btn">😐</button>
+    <button class="emoji-btn">😢</button>
+    <button class="emoji-btn">🤔</button>
+    <button class="emoji-btn">🔥</button>
+  </div>
+  <p id="emojiMessage"></p>
+
+  <h3>Rate this video</h3>
+  <div class="star-rating">
+    <span class="star" data-value="1">★</span>
+    <span class="star" data-value="2">★</span>
+    <span class="star" data-value="3">★</span>
+    <span class="star" data-value="4">★</span>
+    <span class="star" data-value="5">★</span>
+  </div>
+  <p id="ratingMessage"></p>
+
+  <h3>Leave a comment</h3>
+  <textarea id="commentBox" rows="4" placeholder="Write your thoughts here..."></textarea>
+  <button id="submitComment">Submit</button>
+  <div id="commentList"></div>
+</div>
+<script>
+  // Emoji reactions
+  document.querySelectorAll(".emoji-btn").forEach(btn => {
+    btn.onclick = () => {
+      document.getElementById("emojiMessage").textContent = `You reacted with ${btn.textContent}`;
+    };
+  });
+
+  // Star rating
+  const stars = document.querySelectorAll(".star");
+  stars.forEach(star => {
+    star.onclick = () => {
+      const rating = star.getAttribute("data-value");
+      document.getElementById("ratingMessage").textContent = `You rated this ${rating} star${rating > 1 ? 's' : ''}`;
+      stars.forEach(s => s.classList.remove("active"));
+      for (let i = 0; i < rating; i++) {
+        stars[i].classList.add("active");
+      }
+    };
+  });
+
+  // Comment submission
+  document.getElementById("submitComment").onclick = function () {
+    const comment = document.getElementById("commentBox").value.trim();
+    if (comment) {
+      const commentList = document.getElementById("commentList");
+      const newComment = document.createElement("p");
+      newComment.textContent = comment;
+      commentList.appendChild(newComment);
+      document.getElementById("commentBox").value = "";
+    }
+  };
+</script>
+
+<P> 
+    Hope you got to enjoy the session.
+    If you wish to have a one on one session with me, please make payment through M-pesa by clicking the button below.<mark>200ksh per session.Each session,40 min duration.</mark>
+    After payment, send me a whatsapp message on 0799097143 by clicking the button "Confirm via WhatsApp" that shows up after payment.
+     <mark>NOTE:</mark>we will tackle topics of your own choice that you find difficult during the one on one session.
+    Hope to hear from you soon.
+</P>
+        <em> READY TO MAKE PAYMENT </em>
+            <button><a href="mpesa-backend/index.html">Pay with M-Pesa</a></button>
+        </div>
+    </body>
+</html>
