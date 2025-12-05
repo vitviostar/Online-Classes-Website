@@ -1,49 +1,70 @@
 <!DOCTYPE html>
-<html> 
-    <head>
-        <title>
-            www.Prof.Victor.com
-        </title>
-        <link type="text/css" rel="stylesheet" href="styles.css">
-    </head>
-    <body>
-        <hi>
-           WELCOME TO PROF.VICTOR MUGAMBI'S ONLINE CLASSES
-        </hi>
-        <header>
-            <li> CLASSES </li>
-        </header>
-        <section class="homebackground">
-            <h2> HOME </h2>
-            <ul>
-                <li><a href=" Maths.html"> Maths </a> </li>
-                <li><a href="Physics.html">Physics</a></li>
-                <li><a href="Computer Studies.html"> Computer Studies </a></li>
-            </ul>
-        </section>
-        <footer>
-            <h3> 
-                My work is to make your studies simpler and help you to succeed.
-            </h3>
-            <details>
-                <summary>
-                    Who is Prof.Victor?
-                </summary>
-                <p class="featurebox about"> 
-                Prof.Victor is a professional teacher of Maths, Physics and Computer Studies.
-                He has got advanced skills in teaching and experience.
-                Over the years he has assisted many students to pass their national exam and mentored them
-                to be successful in life.  
-                </p>
-                <figure>
-                <img src ="victor.jpg" alt="Prof.Victor Mugambi" class="victor">
-                <figcaption> Prof.Victor Mugambi </figcaption>
-                </figure>
-            </details>
-        </footer>
-        <script>
-            window.MPESA_BACKEND_URL = 'http://localhost:3000/pay';
-        </script>
-        <script src="script.js"></script>
-    </body>
+<html>
+<head>
+    <title>M-PESA Payment</title>
+    <style>
+        .demo-banner { background:#ffeb3b; padding:8px; border-radius:6px; margin-bottom:12px; }
+    </style>
+    <script>
+        async function initiatePayment() {
+            const name = prompt("Enter your full name:");
+            if (!name) return;
+
+            const phone = prompt("Enter your phone number (0....):");
+            if (!phone || !phone.match(/^0\d{9}$/)) {
+                alert("Invalid phone number. Must start with 0 and be 10 digits.");
+                return;
+            }
+
+            const amount = prompt("Enter the amount to pay:");
+            if (!amount || isNaN(amount) || Number(amount) <= 0) {
+                alert("Invalid amount.");
+                return;
+            }
+
+            // Simulate API call to backend to initiate STK Push
+            try {
+                // Replace this fetch with your real backend URL and logic
+                const response = await fetch("http://localhost:3000/api/pay", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        name: name,
+                        phone: phone,
+                        amount: amount
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    // Show confirmation
+                    document.getElementById("confirmation").innerHTML = `
+                        <h3>Payment Initiated</h3>
+                        <p>An M-PESA prompt has been sent to <strong>${phone}</strong>. Please enter your M-PESA PIN to complete the payment of KES ${amount}.</p>
+                        <p>After payment, click below to confirm on WhatsApp (to 0799097143):</p>
+                        <a href="https://wa.me/254799097143?text=Hello,%20I%20have%20paid%20KES%20${amount}%20via%20M-PESA.%20My%20name%20is%20${encodeURIComponent(name)}." target="_blank">
+                            <button>Confirm via WhatsApp</button>
+                        </a>
+                    `;
+                } else {
+                    alert("Payment failed: " + result.message);
+                }
+
+            } catch (error) {
+                console.error(error);
+                alert("An error occurred while initiating payment.");
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="demo-banner"><strong>PAYMENT METHOD</strong> — MONEY SENT TO MPESA</div>
+    <h2>M-PESA Payment Portal</h2>
+    <button onclick="initiatePayment()">Pay Now</button>
+
+    <div id="confirmation" style="margin-top: 20px;"></div>
+</body>
 </html>
